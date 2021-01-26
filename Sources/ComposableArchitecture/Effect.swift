@@ -223,7 +223,8 @@ public struct Effect<Output, Failure: Error>: Publisher {
   /// - Parameter effects: A sequence of effects.
   /// - Returns: A new effect
   public static func merge<S: Sequence>(_ effects: S) -> Effect where S.Element == Effect {
-    Publishers.MergeMany(effects).eraseToEffect()
+    //Publishers.MergeMany(effects).eraseToEffect()
+    return effects.publisher.mapError(absurd).flatMap { $0 }.eraseToEffect()
   }
 
   /// Creates an effect that executes some work in the real world that doesn't need to feed data
@@ -334,3 +335,5 @@ extension Publisher {
       .eraseToEffect()
   }
 }
+
+func absurd<A>(_ never: Never) -> A { }
